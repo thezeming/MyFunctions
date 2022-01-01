@@ -8,7 +8,7 @@
 #'
 #' @param WEIGHTING This variable specifies the weighting scheme.
 #' For example, if you wish to do a value weighted portfolio sort, put the cross-sectional marcket cap here.
-#' Otherwise, enter 'equal' as character, this will give you a equal weighted portfolio sort.
+#' Otherwise, enter 'equal' as character, this will give you an equal weighted portfolio sort.
 #'
 #' @param HOLD This is the asset returns at t.
 #'
