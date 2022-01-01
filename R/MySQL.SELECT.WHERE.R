@@ -1,3 +1,15 @@
+#' Selecting from MySQL
+#'
+#' This function executes the MySQL query SELECT...WHERE...AND...
+#'
+#' @param waht What to be selected, part of MySQL query that follows 'SELECT'
+#' @param from.table the MySQL table from which the data is selected
+#' @param myConnection The MySQL connection
+#' @param ... The part of query that follows 'WHERE', and 'AND'
+#' @param UNION_BY_FROM A logical argument, indicating whether to use 'UNION ALL'. Check the code for details.
+#' @return The data fetched from DB.
+#'
+#'
 #' @export
 MySQL.SELECT.WHERE <- function(what,
                                from.table,
