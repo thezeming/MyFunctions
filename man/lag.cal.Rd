@@ -7,7 +7,7 @@
 \method{lag}{cal}(x)
 }
 \arguments{
-\item{x}{A series of data}
+\item{x}{A series of data.}
 }
 \value{
 The optimal lags for Newey-West tests.

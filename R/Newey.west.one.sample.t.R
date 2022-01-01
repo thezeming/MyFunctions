@@ -11,7 +11,7 @@ Newey.west.one.sample.t <- function(dat){
   time_series_vector <- dat %>% as.vector()
   market_timing_ave_t_regression <- lm(time_series_vector~1)
 
-  t <- coeftest(market_timing_ave_t_regression, vcov. = NeweyWest(market_timing_ave_t_regression,
+  t <- lmtest::coeftest(market_timing_ave_t_regression, vcov. = sandwich::NeweyWest(market_timing_ave_t_regression,
                                                                   lag = lag.cal(length(dat)),
                                                                   prewhite = FALSE))[1,3]
   return(t)
