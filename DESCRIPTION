@@ -20,5 +20,6 @@ Imports:
     sandwich,
     EnvStats,
     xts,
-    zoo
+    zoo,
+    dplyr
     
