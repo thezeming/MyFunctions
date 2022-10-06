@@ -2,6 +2,7 @@
 
 S3method(lag,cal)
 export("%>%")
+export(CRSP.MERGE)
 export(MySQL.SELECT.WHERE)
 export(Newey.west.one.sample.t)
 export(OLS.REG)
