@@ -186,10 +186,12 @@ CRSP.MERGE <-
       tidyr::fill(!!!dplyr::syms(fillvars),
            .direction = 'down') |>
       dplyr::filter(indicator == 1) |>
-      dplyr::select(-indicator) |>
+      dplyr::select(-indicator,
+                    -minnamedt) |>
       dplyr::distinct(!!!dplyr::syms(sevars),
                .keep_all = TRUE) |>
       dplyr::ungroup()
 
     return(dat)
   }
+
