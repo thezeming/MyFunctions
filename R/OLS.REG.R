@@ -15,6 +15,8 @@
 #' @param star_paren A Boolean value, indicating whether to give stars to the coefficients.
 #' Note, if TRUE, this changes the results from numeric to character.
 #'
+#' @param NeweyWest A Boolean value, indicating whether Newey-West t values are used. Lags are computed using lag.cal.R. The default is FALSE.
+#'
 #' @return A dataframe that reports the regression results.
 #'
 #'
@@ -34,20 +36,20 @@ OLS.REG <- function(multicolumn_data,
   regression <- lm(DATA)
   sum_reg <- summary(regression)
 
-  
+
   Adj.RSQ <- sum_reg$adj.r.squared
-  
+
   result_colnames <- c('Intercept',
                        IndVarNames,
                        'Adj.R^2(%)')
-  
+
   result <- matrix(NA,
                    nrow = 2,
                    ncol = length(result_colnames))
   colnames(result) <- result_colnames
   rownames(result) <- c('estimates', 't')
   result <- as.data.frame(result)
-  
+
   ###### filling results #################
   result['estimates',] <- c(regression$coefficients, Adj.RSQ*100)*c(annualisation_factor, rep(scalar,number_of_columns-1), 1)
   if(NeweyWest){
@@ -97,6 +99,6 @@ OLS.REG <- function(multicolumn_data,
                                                       rounding_decimal),
                                                 nsmall = rounding_decimal)
   }
-  
+
   return(result)
 }

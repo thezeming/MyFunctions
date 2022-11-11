@@ -26,6 +26,8 @@ The default value is 252.}
 
 \item{star_paren}{A Boolean value, indicating whether to give stars to the coefficients.
 Note, if TRUE, this changes the results from numeric to character.}
+
+\item{NeweyWest}{A Boolean value, indicating whether Newey-West t values are used. Lags are computed using lag.cal.R. The default is FALSE.}
 }
 \value{
 A dataframe that reports the regression results.
