@@ -23,33 +23,42 @@ OLS.REG <- function(multicolumn_data,
                     annualisation_factor = 252,
                     rounding_decimal = 2,
                     scalar =1,
-                    star_paren = TRUE){
+                    star_paren = TRUE,
+                    NeweyWest = FALSE){
   if(nrow(na.omit(multicolumn_data)) < (multicolumn_data %>% ncol + 1)){
-    stop('This function requires at least three non na observations.')
+    stop('Not enough non na observations.')
   }
   DATA <- as.data.frame(multicolumn_data)
+  IndVarNames <- colnames(DATA)[-1]
   number_of_columns <- ncol(DATA)
   regression <- lm(DATA)
   sum_reg <- summary(regression)
 
+  
   Adj.RSQ <- sum_reg$adj.r.squared
-
+  
   result_colnames <- c('Intercept',
-                       paste('V',
-                             seq(number_of_columns - 1),
-                             sep = ''),
+                       IndVarNames,
                        'Adj.R^2(%)')
-
+  
   result <- matrix(NA,
                    nrow = 2,
                    ncol = length(result_colnames))
   colnames(result) <- result_colnames
   rownames(result) <- c('estimates', 't')
   result <- as.data.frame(result)
-
+  
   ###### filling results #################
   result['estimates',] <- c(regression$coefficients, Adj.RSQ*100)*c(annualisation_factor, rep(scalar,number_of_columns-1), 1)
-  result['t', ] <- c(sum_reg$coefficients[, 't value'], NA)
+  if(NeweyWest){
+    sum_reg_NW <- lmtest::coeftest(regression, vcov. = sandwich::NeweyWest(regression,
+                                                                           lag = lag.cal(nrow(na.omit(DATA))),
+                                                                           prewhite = FALSE))
+    result['t', ] <- c(sum_reg_NW[,'t value'], NA)
+  }else{
+    result['t', ] <- c(sum_reg$coefficients[, 't value'], NA)
+  }
+
   result <- as.data.frame(result)
   ############### staring ###########
   if(star_paren == TRUE){
@@ -88,6 +97,6 @@ OLS.REG <- function(multicolumn_data,
                                                       rounding_decimal),
                                                 nsmall = rounding_decimal)
   }
-
+  
   return(result)
 }

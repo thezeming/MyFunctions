@@ -9,7 +9,8 @@ OLS.REG(
   annualisation_factor = 252,
   rounding_decimal = 2,
   scalar = 1,
-  star_paren = TRUE
+  star_paren = TRUE,
+  NeweyWest = FALSE
 )
 }
 \arguments{
