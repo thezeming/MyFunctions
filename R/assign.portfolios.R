@@ -22,7 +22,7 @@
 #' This will be part of the column names for the breakpoint columns.
 #' The default is 'bp', which gives column names bp1, bp2, ...
 #'
-#' @return A tiblle that contains two types of columns (variables), one is the portfolio membership columns, the other is the breakpoint columns.
+#' @return A tibble that contains two types of columns (variables), one is the portfolio membership columns, the other is the breakpoint columns.
 #' Each portfolio membership column gives Boolean values indicating whether an asset belongs to that portfolio.
 #' Each breakpint column gives the breakpoint used for computing membership, this will be one column more than the portfolio memebership columns.
 #'
