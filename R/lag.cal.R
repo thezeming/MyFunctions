@@ -2,7 +2,7 @@
 #'
 #' This function computes the optimal lags for Newey-West tests.
 #'
-#' @param x A series of data.
+#' @param x The number of periods in the time series.
 #' @return The optimal lags for Newey-West tests.
 
 #' @export
