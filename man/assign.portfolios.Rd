@@ -8,7 +8,8 @@ assign.portfolios(
   data,
   break_var,
   sort_var,
-  n_portfolios,
+  bps = NULL,
+  n_portfolios = 10,
   P_prefix = "P",
   bp_prefix = "bp"
 )
@@ -20,8 +21,12 @@ assign.portfolios(
 
 \item{sort_var}{The variable that is used to compute portfolio membership.}
 
+\item{bps}{A numerical vector specifying customised preakpoints.
+It should contain only the breakpoints not the end values.
+For example, for a tercile sort, this value should be c(0.2, 0.8), not c(0, 0.2, 0.8, 1).}
+
 \item{n_portfolios}{A possitive number.
-This is the umber of portfolios to which assets are assigned.
+This is the umber of portfolios to which assets are evenly assigned.
 Breakpoints are computed evenly across the range in each cross-section.}
 
 \item{P_prefix}{The prefix to be placed in front of portfolio numbers.

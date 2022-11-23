@@ -9,9 +9,13 @@
 #' @param break_var The variable that is used to compute breakpoints.
 #'
 #' @param sort_var The variable that is used to compute portfolio membership.
+#' 
+#' @param bps A numerical vector specifying customised preakpoints.
+#' It should contain only the breakpoints not the end values.
+#' For example, for a tercile sort, this value should be c(0.2, 0.8), not c(0, 0.2, 0.8, 1).
 #'
 #' @param n_portfolios A possitive number.
-#' This is the umber of portfolios to which assets are assigned.
+#' This is the umber of portfolios to which assets are evenly assigned.
 #' Breakpoints are computed evenly across the range in each cross-section.
 #'
 #' @param P_prefix The prefix to be placed in front of portfolio numbers.
@@ -32,16 +36,23 @@ assign.portfolios <-
   function(data,
            break_var,
            sort_var,
-           n_portfolios,
+           bps = NULL,
+           n_portfolios = 10,
            P_prefix = 'P',
            bp_prefix = 'bp') {
+    if (is.null(bps)){
+      breakpoints_probs <- seq(0, 1, length.out = n_portfolios + 1)
+    }else{
+      breakpoints_probs <- c(0, bps, 1)
+    }
+    
     breakpoints <- data |>
       summarize(breakpoint = quantile({
         {
           break_var
         }
       },
-      probs = seq(0, 1, length.out = n_portfolios + 1),
+      probs = breakpoints_probs,
       na.rm = TRUE)) |>
       pull(breakpoint) |>
       as.numeric()
