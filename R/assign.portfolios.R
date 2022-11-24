@@ -25,6 +25,9 @@
 #' @param bp_prefix Similar to P_prefix, this is the prefix to be placed in front of breakpoint numbers.
 #' This will be part of the column names for the breakpoint columns.
 #' The default is 'bp', which gives column names bp1, bp2, ...
+#' 
+#' @param type An integer between 1 and 9 selecting one of the nine quantile algorithms used by quantile().
+#' The default value is 2 which is the default algorithm used by SAS.
 #'
 #' @return A tibble that contains two types of columns (variables), one is the portfolio membership columns, the other is the breakpoint columns.
 #' Each portfolio membership column gives Boolean values indicating whether an asset belongs to that portfolio.
@@ -39,7 +42,8 @@ assign.portfolios <-
            bps = NULL,
            n_portfolios = 10,
            P_prefix = 'P',
-           bp_prefix = 'bp') {
+           bp_prefix = 'bp',
+           type = 2) {
     if (is.null(bps)){
       breakpoints_probs <- seq(0, 1, length.out = n_portfolios + 1)
     }else{
@@ -53,7 +57,8 @@ assign.portfolios <-
         }
       },
       probs = breakpoints_probs,
-      na.rm = TRUE)) |>
+      na.rm = TRUE,
+      type = type)) |>
       pull(breakpoint) |>
       as.numeric()
 
