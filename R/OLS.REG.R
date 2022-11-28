@@ -39,12 +39,12 @@ OLS.REG <- function(multicolumn_data,
     if (GiveError) {
       stop('Degree of freedom is less than or equal to 0.')
     } else{
-      result <- matrix(NA,
-                       nrow = 2,
-                       ncol = length(result_colnames))
       result_colnames <- c('Intercept',
                            IndVarNames,
                            'Adj.R^2(%)')
+      result <- matrix(NA,
+                       nrow = 2,
+                       ncol = length(result_colnames))
       colnames(result) <- result_colnames
       rownames(result) <- c('estimates', 't')
       result <- as.data.frame(result)
