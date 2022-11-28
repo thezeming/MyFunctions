@@ -1,6 +1,8 @@
 #' Merging WRDS CRSP stock file and event file
 #'
-#' This function merges the stock file and the event file of CRSP it is an R translation of the SAS macro CRSPMERGE by WRDS:https://wrds-www.wharton.upenn.edu/pages/support/research-wrds/macros/wrds-macro-crspmerge/. It requires R version 4.2.0 or above as it uses the native pipe and its placeholder.
+#' This function merges the stock file and the event file of CRSP.
+#' It is essentially an R translation of the SAS macro CRSPMERGE by WRDS:https://wrds-www.wharton.upenn.edu/pages/support/research-wrds/macros/wrds-macro-crspmerge/.
+#' It requires R version 4.2.0 or above as it uses the native pipe and its placeholder.
 #'
 #' @param freq The frequency of the data being retrieved. Passible values are 'd' for daily and 'm' for monthly.
 #'
@@ -41,19 +43,21 @@ CRSP.MERGE <-
     start_date <- lubridate::ymd(START_date)
     end_date <- lubridate::ymd(END_date)
 
+    if(start_date > end_date){
+      stop(
+        'START_date must be smaller than or equal to END_date.'
+      )
+    }
+
     sfvars <-
       c('permno',
         'date',
-        SFvars)
+        tolower(SFvars))
 
     sevars <-
       c('permno',
         'date',
-        'ticker',
-        'ncusip',
-        'exchcd',
-        'shrcd',
-        'siccd')
+        tolower(SEvars))
 
     # once you setup the pgpass.conf file as explained at https://wrds-www.wharton.upenn.edu/pages/support/programming-wrds/programming-r/r-from-your-computer/, you don't need to enter your password anymore.
     if(pgpass){
@@ -100,10 +104,15 @@ CRSP.MERGE <-
     if (length(e) != 0) {
       stop(sfvars[e] |>
              paste0(collapse = ' ') |>
-             paste0('Invalid names in ',
-                    paste0(freq, 'sf'),
+             paste0('Invalid values in SFvars',
                     ': ',
-                    ... = _))
+                    ... = _) |>
+            paste0('\n Possible options in ',
+                   paste0(freq, 'sf'),
+                   ' are:\n',
+                   paste0(colnames(sf_db)[!colnames(sf_db) %in% c('permno', 'date')],
+                          collapse = ' '))
+                   )
     }
 
 
@@ -114,10 +123,15 @@ CRSP.MERGE <-
     if (length(e) != 0) {
       stop(sevars[e] |>
              paste0(collapse = ' ') |>
-             paste0('Invalid names in ',
-                    paste0(freq, 'seall'),
+             paste0('Invalid values in SEvars',
                     ': ',
-                    ... = _))
+                    ... = _) |>
+            paste0('\n Possible options in ',
+                   paste0(freq, 'seall'),
+                   ' are:\n',
+                   paste0(colnames(seall_db)[!colnames(seall_db) %in% c('permno', 'date')],
+                          collapse = ' '))
+                    )
     }
 
 
@@ -151,7 +165,8 @@ CRSP.MERGE <-
         by = c('permno')
       ) |>
       dplyr::filter(date >= minnamedt,
-             date <= end_date)
+             date <= end_date) |>
+      dplyr::select(-minnamedt)
 
     ## merge stock and event data ##
 
@@ -177,17 +192,21 @@ CRSP.MERGE <-
 
     dat <-
       sedata_db |>
+      dplyr::mutate(eventdata = 1) |>
+      # note that full_joint, not right_joint, is required here.
+      # (Imagine a permno of which the stock file has a gap in timestamps, and the variables in the event file change value during this gap.)
       dplyr::full_join(sfdata_db |>
-                         dplyr::mutate(indicator = 1),
+                         dplyr::mutate(stockdata = 1),
                 by = c('permno',
                        'date')) |>
-      dplyr::group_by(permno) |>
-      dbplyr::window_order(date) |>
+      # I didn't order the stock and event files above as in the original SAS file, this is because the 'ORDER BY is ignored ... use window_order() instead?' warning.
+      # Therefore I order the merged dataset by permno and date here.
+      # This matters for the below filling of the even variables.
+      dplyr::arrange(permno, date) |>
       tidyr::fill(!!!dplyr::syms(fillvars),
            .direction = 'down') |>
-      dplyr::filter(indicator == 1) |>
-      dplyr::select(-indicator,
-                    -minnamedt) |>
+      dplyr::filter(stockdata == 1) |>
+      dplyr::select(-stockdata) |>
       dplyr::distinct(!!!dplyr::syms(sevars),
                .keep_all = TRUE) |>
       dplyr::ungroup()

@@ -6,11 +6,12 @@
 \usage{
 OLS.REG(
   multicolumn_data,
-  annualisation_factor = 252,
+  annualisation_factor = 1,
   rounding_decimal = 2,
   scalar = 1,
   star_paren = TRUE,
-  NeweyWest = FALSE
+  NeweyWest = FALSE,
+  GiveError = TRUE
 )
 }
 \arguments{
@@ -18,16 +19,19 @@ OLS.REG(
 
 \item{annualisation_factor}{The multiplier used to annualise the data.
 Effectively this value is multiplied with the alpha from the regression using original data.
-The default value is 252.}
+The default value is 1. Commonly used values include 252 and 12.}
 
 \item{rounding_decimal}{An positive integer indicating how many decimal to keep in the reported results.}
 
 \item{scalar}{A scalar applied to the betas. The default value is 1.}
 
 \item{star_paren}{A Boolean value, indicating whether to give stars to the coefficients.
-Note, if TRUE, this changes the results from numeric to character.}
+Note, if TRUE, this changes the results from numeric to character (This is the default).
+If FALSE, the function ignores the argument rounding_decimal.}
 
 \item{NeweyWest}{A Boolean value, indicating whether Newey-West t values are used. Lags are computed using lag.cal.R. The default is FALSE.}
+
+\item{GiveError}{A Boolean value indicating, in the case that the degree of freedom is less than or equal to 0, whether to throw an error or give a dataframe of NA's.}
 }
 \value{
 A dataframe that reports the regression results.

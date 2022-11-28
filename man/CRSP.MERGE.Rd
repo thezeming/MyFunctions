@@ -36,5 +36,7 @@ CRSP.MERGE(
 A tbl_PqConnection object, on which further dplyr operations can be applied. Final results (data) can be obtained by calling the collect() function.
 }
 \description{
-This function merges the stock file and the event file of CRSP it is an R translation of the SAS macro CRSPMERGE by WRDS:https://wrds-www.wharton.upenn.edu/pages/support/research-wrds/macros/wrds-macro-crspmerge/. It requires R version 4.2.0 or above as it uses the native pipe and its placeholder.
+This function merges the stock file and the event file of CRSP.
+It is essentially an R translation of the SAS macro CRSPMERGE by WRDS:https://wrds-www.wharton.upenn.edu/pages/support/research-wrds/macros/wrds-macro-crspmerge/.
+It requires R version 4.2.0 or above as it uses the native pipe and its placeholder.
 }
