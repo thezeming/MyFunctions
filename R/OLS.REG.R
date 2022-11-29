@@ -20,6 +20,10 @@
 #'
 #' @param GiveError A Boolean value indicating, in the case that the degree of freedom is less than or equal to 0, whether to throw an error or give a dataframe of NA's.
 #'
+#' @param CriticalValues A numeric vector of length 3, giving the critical t-values when staring.
+#' The three numbers given have to be positive (the negative critical values are then mirrored automatically).
+#' This argument will be ignored when star_paren = FALSE.
+#'
 #' @return A dataframe that reports the regression results.
 #'
 #'
@@ -30,18 +34,20 @@ OLS.REG <- function(multicolumn_data,
                     scalar = 1,
                     star_paren = TRUE,
                     NeweyWest = FALSE,
-                    GiveError = TRUE) {
+                    GiveError = TRUE,
+                    CriticalValues = c(1.645, 1.960, 2.576)) {
   DATA <- as.data.frame(multicolumn_data)
   IndVarNames <- colnames(DATA)[-1]
   number_of_columns <- ncol(DATA)
+  result_colnames <- c('Intercept',
+                           IndVarNames,
+                           'Adj.R^2(%)',
+                           'No.Obs')
 
   if (nrow(na.omit(DATA)) - (DATA |>  ncol()) <= 0) {
     if (GiveError) {
       stop('Degree of freedom is less than or equal to 0.')
     } else{
-      result_colnames <- c('Intercept',
-                           IndVarNames,
-                           'Adj.R^2(%)')
       result <- matrix(NA,
                        nrow = 2,
                        ncol = length(result_colnames))
@@ -57,10 +63,6 @@ OLS.REG <- function(multicolumn_data,
 
     Adj.RSQ <- sum_reg$adj.r.squared
 
-    result_colnames <- c('Intercept',
-                         IndVarNames,
-                         'Adj.R^2(%)')
-
     result <- matrix(NA,
                      nrow = 2,
                      ncol = length(result_colnames))
@@ -70,8 +72,8 @@ OLS.REG <- function(multicolumn_data,
 
     ###### filling results #################
     result['estimates', ] <-
-      c(regression$coefficients, Adj.RSQ * 100) * c(annualisation_factor, rep(scalar, number_of_columns -
-                                                                                1), 1)
+      c(regression$coefficients, Adj.RSQ * 100, nrow(na.omit(DATA))) * c(annualisation_factor, rep(scalar, number_of_columns -
+                                                                                1), 1, 1)
     if (NeweyWest) {
       sum_reg_NW <-
         lmtest::coeftest(regression,
@@ -80,21 +82,21 @@ OLS.REG <- function(multicolumn_data,
                                                        na.omit(DATA)
                                                      )),
                                                      prewhite = FALSE))
-      result['t',] <- c(sum_reg_NW[, 't value'], NA)
+      result['t',] <- c(sum_reg_NW[, 't value'], NA, NA)
     } else{
-      result['t',] <- c(sum_reg$coefficients[, 't value'], NA)
+      result['t',] <- c(sum_reg$coefficients[, 't value'], NA, NA)
     }
 
     result <- as.data.frame(result)
     ############### staring ###########
     if (star_paren == TRUE) {
       for (i in 1:number_of_columns) {
-        if (result['t', i] > -1.645 & result['t', i] < 1.645) {
+        if (result['t', i] > -CriticalValues[1] & result['t', i] < CriticalValues[1]) {
           result['estimates', i] <-
             format(round(as.numeric(result['estimates', i]),
                          rounding_decimal),
                    nsmall = rounding_decimal)
-        } else if (result['t', i] > -1.96 & result['t', i] < 1.96) {
+        } else if (result['t', i] > -CriticalValues[2] & result['t', i] < CriticalValues[2]) {
           result['estimates', i] <-
             paste(format(round(
               as.numeric(result['estimates', i]),
@@ -103,7 +105,7 @@ OLS.REG <- function(multicolumn_data,
             nsmall = rounding_decimal),
             '*',
             sep = '')
-        } else if (result['t', i] > -2.576 & result['t', i] < 2.576) {
+        } else if (result['t', i] > -CriticalValues[3] & result['t', i] < CriticalValues[3]) {
           result['estimates', i] <-
             paste(format(round(
               as.numeric(result['estimates', i]),

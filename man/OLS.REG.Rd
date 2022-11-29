@@ -11,7 +11,8 @@ OLS.REG(
   scalar = 1,
   star_paren = TRUE,
   NeweyWest = FALSE,
-  GiveError = TRUE
+  GiveError = TRUE,
+  CriticalValues = c(1.645, 1.96, 2.576)
 )
 }
 \arguments{
@@ -32,6 +33,10 @@ If FALSE, the function ignores the argument rounding_decimal.}
 \item{NeweyWest}{A Boolean value, indicating whether Newey-West t values are used. Lags are computed using lag.cal.R. The default is FALSE.}
 
 \item{GiveError}{A Boolean value indicating, in the case that the degree of freedom is less than or equal to 0, whether to throw an error or give a dataframe of NA's.}
+
+\item{CriticalValues}{A numeric vector of length 3, giving the critical t-values when staring.
+The three numbers given have to be positive (the negative critical values are then mirrored automatically).
+This argument will be ignored when star_paren = FALSE.}
 }
 \value{
 A dataframe that reports the regression results.
