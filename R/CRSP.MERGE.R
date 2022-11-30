@@ -170,7 +170,7 @@ CRSP.MERGE <-
 
     ## merge stock and event data ##
 
-    eventvars <-
+    fillvars <-
       c(
         'ticker',
         'comnam',
@@ -187,9 +187,6 @@ CRSP.MERGE <-
         'nsdinx'
       )
 
-    fillvars <-
-      sevars[sevars %in% eventvars]
-
     dat <-
       sedata_db |>
       dplyr::mutate(eventdata = 1) |>
@@ -199,16 +196,40 @@ CRSP.MERGE <-
                          dplyr::mutate(stockdata = 1),
                 by = c('permno',
                        'date')) |>
-      # I didn't order the stock and event files above as in the original SAS file, this is because the 'ORDER BY is ignored ... use window_order() instead?' warning.
+      # I didn't order the stock and event files above as in the original SAS code, this is because the 'ORDER BY is ignored ... use window_order() instead?' warning.
       # Therefore I order the merged dataset by permno and date here.
-      # This matters for the below filling of the even variables.
+      # This matters for the following filling of the even variables.
       dplyr::arrange(permno, date) |>
-      tidyr::fill(!!!dplyr::syms(fillvars),
+      dplyr::collect() |>
+      dplyr::group_by(permno) |>
+      # for sevars that are in fillvars, replace the missing value with Inf for numerical variable and '.' for character variables if eventdata == 1.
+      # The reason of doing so is to allow for the fill function below to run without problems.
+      # Otherwise this may be a problem. For example, for permno 10859, it has siccd as 5031 on 1972-12-14 and then as NA on 1973-05-04.
+      # Without the aforementioned step, the siccd for permno 10859 on 1973-05-07 would be filled with 5031 where it really should be NA.
+      # For detailed logic, see the original SAS file.
+        dplyr::mutate(dplyr::across(.cols = tidyselect::any_of(fillvars),
+                            .fn = ~ {
+                                if(is.numeric(.x)){
+                                        dplyr::case_when(eventdata == 1 & is.na(.x) ~ Inf,
+                                        TRUE ~ .x)
+                            }else{
+                                dplyr::case_when(eventdata == 1 & is.na(.x) ~ '.',
+                                        TRUE ~ .x)
+                            }
+                            })) |>
+    tidyr::fill(tidyselect::any_of(fillvars),
            .direction = 'down') |>
+      # The original SAS file deletes obs with eventdata == 1 & stockdata != 1.
+      # Since there's no obs with eventdata != 1 & stockdata != 1, the above is equivlent to retain obs with stockdata == 1.
       dplyr::filter(stockdata == 1) |>
-      dplyr::select(-stockdata) |>
-      dplyr::distinct(!!!dplyr::syms(sevars),
-               .keep_all = TRUE) |>
+      dplyr::select(-c(eventdata,
+                       stockdata)) |>
+      # changing '.' and Inf back to NA.
+      dplyr::mutate(dplyr::across(.cols = tidyselect::any_of(fillvars),
+                            .fn = ~ dplyr::na_if(.x, '.'))) |>
+      dplyr::mutate(dplyr::across(.cols = tidyselect::any_of(fillvars),
+                            .fn = ~ dplyr::na_if(.x, Inf))) |>
+      dplyr::distinct() |>
       dplyr::ungroup()
 
     return(dat)
