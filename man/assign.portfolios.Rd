@@ -12,6 +12,7 @@ assign.portfolios(
   n_portfolios = 10,
   P_prefix = "P",
   bp_prefix = "bp",
+  show_bps = TRUE,
   type = 2
 )
 }
@@ -37,6 +38,9 @@ The default is 'P', which gives column names P1, P2, P3, ...}
 \item{bp_prefix}{Similar to P_prefix, this is the prefix to be placed in front of breakpoint numbers.
 This will be part of the column names for the breakpoint columns.
 The default is 'bp', which gives column names bp1, bp2, ...}
+
+\item{show_bps}{A Boolean value indicating whether to retain breakpoints in the output dataframe.
+When FALSE, the breakpoints will not be shown and the argument bp_prefix will be ignored.}
 
 \item{type}{An integer between 1 and 9 selecting one of the nine quantile algorithms used by quantile().
 The default value is 2 which is the default algorithm used by SAS.}
