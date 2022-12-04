@@ -68,6 +68,11 @@ assign.portfolios <-
       type = type)) |>
       pull(breakpoint) |>
       as.numeric()
+
+# replace the endpoints with -Inf and Inf, otherwise there may be problems when computing breakpoints using variables other than sorting variables.
+# E.g, the end points of NYSE breakpoints are not necessarily the end points of the actual sorting variable, which may be one from the overall sample.
+    breakpoints[1] <- -Inf
+    breakpoints[length(breakpoints)] <- Inf
     
     for (i in 1:n_portfolios) {
       data <-
