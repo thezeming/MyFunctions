@@ -26,11 +26,19 @@
 #' This will be part of the column names for the breakpoint columns.
 #' The default is 'bp', which gives column names bp1, bp2, ...
 #'
-#' @param type An integer between 1 and 9 selecting one of the nine quantile algorithms used by quantile().
+#' @param bp_type An integer between 1 and 9 selecting one of the nine quantile algorithms used by quantile(), see which for details.
 #' The default value is 2 which is the default algorithm used by SAS.
 #'
 #' @param show_bps A Boolean value indicating whether to retain breakpoints in the output dataframe.
 #' When FALSE, the breakpoints will not be shown and the argument bp_prefix will be ignored.
+#' 
+#' @param form_type An integer between 1 and 4 selecting one of the four portfolio assignment methods:
+#' 
+#'  * 1 selects the portfolio formation method detailed in Bali, Engle, and Murray (2016). It assigns a value to Portfolio 1 if it is in [bp1, bp2], i.e., values at the boundaries are assigned to more than one portfolio.
+#'  * 2 selects the method that assigns a value to Portfolio 1 if it is in [bp1, bp2). No values will be assigned to more than one portfolio.
+#'  * 3 selects the method that assigns a value to Portfolio 1 if it is in (bp1, bp2]. No values will be assigned to more than one portfolio.
+#'  
+#' 
 #'
 #' @return A tibble that contains two types of columns (variables), one is the portfolio membership columns, the other is the breakpoint columns.
 #' Each portfolio membership column gives Boolean values indicating whether an asset belongs to that portfolio.
@@ -47,7 +55,9 @@ assign.portfolios <-
            P_prefix = 'P',
            bp_prefix = 'bp',
            show_bps = TRUE,
-           type = 2) {
+           bp_type = 2,
+           form_type = 1
+           ) {
     OriginalVars <-
       colnames(data)
     
@@ -65,7 +75,7 @@ assign.portfolios <-
       },
       probs = breakpoints_probs,
       na.rm = TRUE,
-      type = type)) |>
+      type = bp_type)) |>
       pull(breakpoint) |>
       as.numeric()
 
@@ -74,7 +84,8 @@ assign.portfolios <-
     breakpoints[1] <- -Inf
     breakpoints[length(breakpoints)] <- Inf
     
-    for (i in 1:n_portfolios) {
+    if (form_type == 1){
+          for (i in 1:n_portfolios) {
       data <-
         data |>
         mutate('{P_prefix}{i}' := if_else({
@@ -89,6 +100,38 @@ assign.portfolios <-
         TRUE,
         FALSE))
     }
+    }else if (form_type == 2){
+          for (i in 1:n_portfolios) {
+      data <-
+        data |>
+        mutate('{P_prefix}{i}' := if_else({
+          {
+            sort_var
+          }
+        } >= breakpoints[i] & {
+          {
+            sort_var
+          }
+        } < breakpoints[i + 1],
+        TRUE,
+        FALSE))
+    }
+    }else if (form_type == 3) {
+             data <-
+        data |>
+        mutate('{P_prefix}{i}' := if_else({
+          {
+            sort_var
+          }
+        } > breakpoints[i] & {
+          {
+            sort_var
+          }
+        } <= breakpoints[i + 1],
+        TRUE,
+        FALSE))
+    }
+
     
     if (show_bps) {
       for (i in 1:length(breakpoints)) {

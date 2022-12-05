@@ -13,7 +13,8 @@ assign.portfolios(
   P_prefix = "P",
   bp_prefix = "bp",
   show_bps = TRUE,
-  type = 2
+  bp_type = 2,
+  form_type = 1
 )
 }
 \arguments{
@@ -42,8 +43,20 @@ The default is 'bp', which gives column names bp1, bp2, ...}
 \item{show_bps}{A Boolean value indicating whether to retain breakpoints in the output dataframe.
 When FALSE, the breakpoints will not be shown and the argument bp_prefix will be ignored.}
 
-\item{type}{An integer between 1 and 9 selecting one of the nine quantile algorithms used by quantile().
+\item{bp_type}{An integer between 1 and 9 selecting one of the nine quantile algorithms used by quantile(), see which for details.
 The default value is 2 which is the default algorithm used by SAS.}
+
+\item{form_type}{An integer between 1 and 4 selecting one of the four portfolio assignment methods:
+\itemize{
+\item 1 selects the portfolio formation method detailed in Bali, Engle, and Murray (2016). It assigns a value to Portfolio 1 if it is in \link{bp1, bp2}, i.e., values at the boundaries are assigned to more than one portfolio.
+\item 2 selects the method that assigns a value to Portfolio 1 if it is in [bp1, bp2). No values will be assigned to more than one portfolio.
+\item 3 selects the method that assigns a value to Portfolio 1 if it is in (bp1, bp2]. No values will be assigned to more than one portfolio.
+}
+
+[bp1, bp2). No values will be assigned to more than one portfolio.
+\itemize{
+\item 3 selects the method that assigns a value to Portfolio 1 if it is in (bp1, bp2]: R:bp1,\%20bp2).\%20No\%20values\%20will\%20be\%20assigned\%20to\%20more\%20than\%20one\%20portfolio.\%0A\%20*\%203\%20selects\%20the\%20method\%20that\%20assigns\%20a\%20value\%20to\%20Portfolio\%201\%20if\%20it\%20is\%20in\%20(bp1,\%20bp2
+}}
 }
 \value{
 A tibble that contains two types of columns (variables), one is the portfolio membership columns, the other is the breakpoint columns.
