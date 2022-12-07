@@ -63,8 +63,9 @@ assign.portfolios <-
     
     if (is.null(bps)) {
       breakpoints_probs <- seq(0, 1, length.out = n_portfolios + 1)
-    } else{
+    } else {
       breakpoints_probs <- c(0, bps, 1)
+      n_portfolios <- length(bps) + 1
     }
     
     breakpoints <- data |>
