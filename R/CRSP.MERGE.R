@@ -1,7 +1,8 @@
 #' Merging WRDS CRSP stock file and event file
 #'
 #' This function merges the stock file and the event file of CRSP.
-#' It is essentially an R translation of the SAS macro CRSPMERGE by WRDS:https://wrds-www.wharton.upenn.edu/pages/support/research-wrds/macros/wrds-macro-crspmerge/.
+#' It is essentially an R translation of the SAS macro CRSPMERGE by WRDS:https://wrds-www.wharton.upenn.edu/pages/support/research-wrds/macros/wrds-macro-crspmerge/, with some minor changes.
+#' I thank the authors of the original SAS code for granting the right of using their logic.
 #' It requires R version 4.2.0 or above as it uses the native pipe and its placeholder.
 #'
 #' @param freq The frequency of the data being retrieved. Passible values are 'd' for daily and 'm' for monthly.

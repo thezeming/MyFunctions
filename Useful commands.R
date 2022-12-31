@@ -13,5 +13,7 @@ devtools::document()
 #                         auth_token = "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")
 
 
-devtools::install_github("thezeming/MyFunctions",
-                        ref="master")
+# devtools::install_github("thezeming/MyFunctions",
+#                         ref="master")
+
+devtools::install_github("thezeming/MyFunctions")
