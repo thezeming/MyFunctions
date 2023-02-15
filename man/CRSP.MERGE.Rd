@@ -33,7 +33,7 @@ CRSP.MERGE(
 \item{pgpass}{A boolean value indicating whether a .pgpass file has been set up on local machine.}
 }
 \value{
-A tbl_PqConnection object, on which further dplyr operations can be applied. Final results (data) can be obtained by calling the collect() function.
+A tibble that contains the merged data.
 }
 \description{
 This function merges the stock file and the event file of CRSP.

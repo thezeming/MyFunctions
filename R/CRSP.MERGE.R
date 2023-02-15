@@ -21,7 +21,7 @@
 #'
 #' @param pgpass A boolean value indicating whether a .pgpass file has been set up on local machine.
 #'
-#' @return A tbl_PqConnection object, on which further dplyr operations can be applied. Final results (data) can be obtained by calling the collect() function.
+#' @return A tibble that contains the merged data.
 #'
 #'
 #' @export
