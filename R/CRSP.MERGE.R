@@ -211,12 +211,12 @@ CRSP.MERGE <-
         dplyr::mutate(dplyr::across(.cols = tidyselect::any_of(fillvars),
                             .fn = ~ {
                                 if(is.numeric(.x)){
-                                        dplyr::case_when(eventdata == 1 & is.na(.x) ~ Inf,
-                                        TRUE ~ .x)
-                            }else{
-                                dplyr::case_when(eventdata == 1 & is.na(.x) ~ '.',
-                                        TRUE ~ .x)
-                            }
+                                      dplyr::case_when(eventdata == 1 & is.na(.x) ~ Inf,
+                                                       TRUE ~ .x)
+                                    }else if(is.character(.x)){
+                                      dplyr::case_when(eventdata == 1 & is.na(.x) ~ '.',
+                                                       TRUE ~ .x)
+                                    }
                             })) |>
     tidyr::fill(tidyselect::any_of(fillvars),
            .direction = 'down') |>
@@ -226,10 +226,12 @@ CRSP.MERGE <-
       dplyr::select(-c(eventdata,
                        stockdata)) |>
       # changing '.' and Inf back to NA.
-      dplyr::mutate(dplyr::across(.cols = tidyselect::any_of(fillvars),
-                            .fn = ~ dplyr::na_if(.x, '.'))) |>
-      dplyr::mutate(dplyr::across(.cols = tidyselect::any_of(fillvars),
-                            .fn = ~ dplyr::na_if(.x, Inf))) |>
+      dplyr::mutate(dplyr::across(.cols = tidyselect::any_of(fillvars) & 
+                                    tidyselect::where(is.character),
+                                  .fn = ~ dplyr::na_if(.x, '.'))) |>
+      dplyr::mutate(dplyr::across(.cols = tidyselect::any_of(fillvars) &
+                                    tidyselect::where(is.numeric),
+                                  .fn = ~ dplyr::na_if(.x, Inf))) |>
       dplyr::distinct() |>
       dplyr::ungroup()
 
