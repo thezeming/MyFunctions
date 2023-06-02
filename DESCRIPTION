@@ -22,7 +22,7 @@ Imports:
     EnvStats,
     xts,
     zoo,
-    dplyr,
+    dplyr (>= 1.1.0),
     tidyverse,
     lubridate,
     dbplyr,

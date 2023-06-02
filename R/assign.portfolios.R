@@ -4,7 +4,8 @@
 #' This function implements the portfolio sorting method as in Bali et al. (2016).
 #' That is, it is possible for an asset to be assigned to more than one portfolios in a given cross-section.
 #'
-#' @param data A tibble that contains at least two variables, one is used to compute breakpoints and the other is used to compute portfolio membership.
+#' @param data A tibble that (normally) contains at least two variables, one is used to compute breakpoints and the other is used to compute portfolio membership.
+#' In the case that the breakpoints are computed from the sorting variable itself, the tibble could potentially contain only one variable.
 #'
 #' @param break_var The variable that is used to compute breakpoints.
 #'
@@ -69,7 +70,7 @@ assign.portfolios <-
     }
     
     breakpoints <- data |>
-      summarize(breakpoint = quantile({
+      reframe(breakpoint = quantile({
         {
           break_var
         }

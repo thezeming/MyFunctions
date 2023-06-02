@@ -18,7 +18,8 @@ assign.portfolios(
 )
 }
 \arguments{
-\item{data}{A tibble that contains at least two variables, one is used to compute breakpoints and the other is used to compute portfolio membership.}
+\item{data}{A tibble that (normally) contains at least two variables, one is used to compute breakpoints and the other is used to compute portfolio membership.
+In the case that the breakpoints are computed from the sorting variable itself, the tibble could potentially contain only one variable.}
 
 \item{break_var}{The variable that is used to compute breakpoints.}
 
