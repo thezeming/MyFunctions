@@ -48,7 +48,7 @@ OLS.REG <- function(multicolumn_data,
     if (GiveError) {
       stop('Degree of freedom is less than or equal to 0.')
     } else{
-      result <- matrix(NA,
+      result <- matrix(NA_real_,
                        nrow = 2,
                        ncol = length(result_colnames))
       colnames(result) <- result_colnames
@@ -63,7 +63,7 @@ OLS.REG <- function(multicolumn_data,
 
     Adj.RSQ <- sum_reg$adj.r.squared
 
-    result <- matrix(NA,
+    result <- matrix(NA_real_,
                      nrow = 2,
                      ncol = length(result_colnames))
     colnames(result) <- result_colnames
@@ -82,9 +82,9 @@ OLS.REG <- function(multicolumn_data,
                                                        na.omit(DATA)
                                                      )),
                                                      prewhite = FALSE))
-      result['t',] <- c(sum_reg_NW[, 't value'], NA, NA)
+      result['t',] <- c(sum_reg_NW[, 't value'], NA_real_, NA_real_)
     } else{
-      result['t',] <- c(sum_reg$coefficients[, 't value'], NA, NA)
+      result['t',] <- c(sum_reg$coefficients[, 't value'], NA_real_, NA_real_)
     }
 
     result <- as.data.frame(result)
