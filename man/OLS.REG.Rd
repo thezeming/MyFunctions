@@ -12,7 +12,8 @@ OLS.REG(
   star_paren = TRUE,
   NeweyWest = FALSE,
   GiveError = TRUE,
-  CriticalValues = c(1.645, 1.96, 2.576)
+  CriticalValues = c(1.645, 1.96, 2.576),
+  ADJRSQ = TRUE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ If FALSE, the function ignores the argument rounding_decimal.}
 \item{CriticalValues}{A numeric vector of length 3, giving the critical t-values when staring.
 The three numbers given have to be positive (the negative critical values are then mirrored automatically).
 This argument will be ignored when star_paren = FALSE.}
+
+\item{ADJRSQ}{A Boolean value indicating whether to report adjusted R squared instead of normal R squared. The default is TRUE.}
 }
 \value{
 A dataframe that reports the regression results.

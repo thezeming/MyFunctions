@@ -23,6 +23,8 @@
 #' @param CriticalValues A numeric vector of length 3, giving the critical t-values when staring.
 #' The three numbers given have to be positive (the negative critical values are then mirrored automatically).
 #' This argument will be ignored when star_paren = FALSE.
+#' 
+#' @param ADJRSQ A Boolean value indicating whether to report adjusted R squared instead of normal R squared. The default is TRUE.
 #'
 #' @return A dataframe that reports the regression results.
 #'
@@ -35,14 +37,22 @@ OLS.REG <- function(multicolumn_data,
                     star_paren = TRUE,
                     NeweyWest = FALSE,
                     GiveError = TRUE,
-                    CriticalValues = c(1.645, 1.960, 2.576)) {
+                    CriticalValues = c(1.645, 1.960, 2.576),
+                    ADJRSQ = TRUE) {
   DATA <- as.data.frame(multicolumn_data)
   IndVarNames <- colnames(DATA)[-1]
   number_of_columns <- ncol(DATA)
+  if(ADJRSQ){
   result_colnames <- c('Intercept',
                            IndVarNames,
                            'Adj.R^2(%)',
                            'No.Obs')
+  }else{
+  result_colnames <- c('Intercept',
+                           IndVarNames,
+                           'R^2(%)',
+                           'No.Obs')
+  }
 
   if (nrow(na.omit(DATA)) - (DATA |>  ncol()) <= 0) {
     if (GiveError) {
@@ -61,7 +71,11 @@ OLS.REG <- function(multicolumn_data,
     sum_reg <- summary(regression)
 
 
-    Adj.RSQ <- sum_reg$adj.r.squared
+    Adj.RSQ <- sum_reg |> 
+               getElement('adj.r.squared')
+
+    RSQ <- sum_reg |> 
+               getElement('r.squared')
 
     result <- matrix(NA_real_,
                      nrow = 2,
@@ -71,9 +85,16 @@ OLS.REG <- function(multicolumn_data,
     result <- as.data.frame(result)
 
     ###### filling results #################
+    if(ADJRSQ){
     result['estimates', ] <-
       c(regression$coefficients, Adj.RSQ * 100, nrow(na.omit(DATA))) * c(annualisation_factor, rep(scalar, number_of_columns -
                                                                                 1), 1, 1)
+    }else{
+    result['estimates', ] <-
+      c(regression$coefficients, RSQ * 100, nrow(na.omit(DATA))) * c(annualisation_factor, rep(scalar, number_of_columns -
+                                                                                1), 1, 1)
+    }
+    
     if (NeweyWest) {
       sum_reg_NW <-
         lmtest::coeftest(regression,
@@ -131,10 +152,18 @@ OLS.REG <- function(multicolumn_data,
                                 ')',
                                 sep = '')
       }
+      if(ADJRSQ){
       result['estimates', 'Adj.R^2(%)'] <-
         format(round(as.numeric(result['estimates', 'Adj.R^2(%)']),
                      rounding_decimal),
                nsmall = rounding_decimal)
+      }else{
+      result['estimates', 'R^2(%)'] <-
+        format(round(as.numeric(result['estimates', 'R^2(%)']),
+                     rounding_decimal),
+               nsmall = rounding_decimal)
+      }
+      
     }
   }
 
