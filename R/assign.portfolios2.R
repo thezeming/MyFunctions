@@ -80,30 +80,24 @@ assign.portfolios2 <-
     breakpoints[length(breakpoints)] <- Inf
     
 
-      
-    if (show_bps) {
-      Dat <- 
-        data |> 
-        mutate(
-          '{P_prefix}1' := {{sort_var}} |> 
-            cut(breakpoints,
-                labels = FALSE),
-          '{P_prefix}2' := {{sort_var}} |> 
-            cut(breakpoints,
-                right = FALSE,
-                labels = FALSE)
-        )
-      
-      for (i in 1:length(breakpoints)) {
-        Dat <-
-          Dat |>
-          mutate('{bp_prefix}{i}' := breakpoints[i])
-      }
-      
-      return(Dat)
-    }else{
+     
+    if(
+      breakpoints |> 
+      head(-1) |> 
+      sum() |> 
+      is.na()
+    ){
       return(
         data |> 
+          mutate(
+            '{P_prefix}1' := NA_real_,
+            '{P_prefix}2' := NA_real_
+          )
+      )
+    }else{
+      if (show_bps) {
+        Dat <- 
+          data |> 
           mutate(
             '{P_prefix}1' := {{sort_var}} |> 
               cut(breakpoints,
@@ -113,8 +107,28 @@ assign.portfolios2 <-
                   right = FALSE,
                   labels = FALSE)
           )
-      )
+        
+        for (i in 1:length(breakpoints)) {
+          Dat <-
+            Dat |>
+            mutate('{bp_prefix}{i}' := breakpoints[i])
+        }
+        
+        return(Dat)
+      }else{
+        return(
+          data |> 
+            mutate(
+              '{P_prefix}1' := {{sort_var}} |> 
+                cut(breakpoints,
+                    labels = FALSE),
+              '{P_prefix}2' := {{sort_var}} |> 
+                cut(breakpoints,
+                    right = FALSE,
+                    labels = FALSE)
+            )
+        )
+      }
     }
-    
 
   }
