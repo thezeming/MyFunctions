@@ -56,5 +56,11 @@ By default, it mutates two new columns indicating the group memberships of each 
 The first column gives results by (], whereas the second gives results by [).
 Further operations required if the portfolio sorting method as in Bali et al. (2016) is to be implemented. (i.e., for a border asset to be assigned to two portfolios in a given cross-section.)
 For example, one could replace the values in the second column with NA when it is the same with the first column and then pivot_longer with values_drop_na = TRUE.
-(Be careful not to do a second sort after this as number of observations, thus breakpoints, may change for the second sort. Finish all the sorts before this operation.)
+}
+\details{
+\strong{CAUTION:}
+\itemize{
+\item Be careful not to do a second sort after this, since the number of observations, thus breakpoints, may change for the second sort. Finish all the sorts before this operation.
+\item This function cannot be applied to grouped tibble as the computation of breakpoints would be across all groups, instead of for each group. Use reframe() and apply it to each group respectively instead.
+}
 }

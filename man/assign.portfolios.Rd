@@ -66,6 +66,6 @@ Each breakpint column gives the breakpoint used for computing membership, this w
 }
 \description{
 This function assigns each of the assets to a portfolio in the cross-section.
-This function implements the portfolio sorting method as in Bali et al. (2016).
+By defult, this function implements the portfolio sorting method as in Bali et al. (2016).
 That is, it is possible for an asset to be assigned to more than one portfolios in a given cross-section.
 }

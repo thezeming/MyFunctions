@@ -1,7 +1,7 @@
 #' Assign Portfolios
 #'
 #' This function assigns each of the assets to a portfolio in the cross-section.
-#' This function implements the portfolio sorting method as in Bali et al. (2016).
+#' By defult, this function implements the portfolio sorting method as in Bali et al. (2016).
 #' That is, it is possible for an asset to be assigned to more than one portfolios in a given cross-section.
 #'
 #' @param data A tibble that (normally) contains at least two variables, one is used to compute breakpoints and the other is used to compute portfolio membership.
