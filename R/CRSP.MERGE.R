@@ -39,7 +39,7 @@ CRSP.MERGE <-
            END_date = '2022-09-27',
            usnm = 'username',
            pwd = 'password',
-           pgpass = TRUE){
+           pgpass = FALSE){
     # setting up variables #
     start_date <- lubridate::ymd(START_date)
     end_date <- lubridate::ymd(END_date)
@@ -226,7 +226,7 @@ CRSP.MERGE <-
       dplyr::select(-c(eventdata,
                        stockdata)) |>
       # changing '.' and Inf back to NA.
-      dplyr::mutate(dplyr::across(.cols = tidyselect::any_of(fillvars) & 
+      dplyr::mutate(dplyr::across(.cols = tidyselect::any_of(fillvars) &
                                     tidyselect::where(is.character),
                                   .fn = ~ dplyr::na_if(.x, '.'))) |>
       dplyr::mutate(dplyr::across(.cols = tidyselect::any_of(fillvars) &

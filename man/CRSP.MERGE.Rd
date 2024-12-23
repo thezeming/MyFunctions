@@ -12,7 +12,7 @@ CRSP.MERGE(
   END_date = "2022-09-27",
   usnm = "username",
   pwd = "password",
-  pgpass = TRUE
+  pgpass = FALSE
 )
 }
 \arguments{
