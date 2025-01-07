@@ -56,7 +56,12 @@ fisd_db <- dplyr::tbl(wrds,
                  dbplyr::in_schema("fisd",
                                    tbl_name))
 
-if(vars != "ALL") {
+if(length(vars) ==1 && vars == "ALL") {
+
+    Dat <- 
+    fisd_db |>
+    dplyr::collect()
+}else {
     # Check for valid variable names
     bad_vars <- setdiff(tolower(vars), tolower(colnames(fisd_db)))
     if (length(bad_vars) > 0) {
@@ -73,10 +78,6 @@ if(vars != "ALL") {
       fisd_db |>
        dplyr::select(!!!dplyr::syms(vars)) |>
        dplyr::collect()
-}else {
-  Dat <- 
-    fisd_db |>
-    dplyr::collect()
 }
 
   # --- 4. Disconnect from WRDS ---
