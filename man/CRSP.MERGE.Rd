@@ -6,8 +6,7 @@
 \usage{
 CRSP.MERGE(
   freq = "d",
-  SFvars = c("prc", "ret", "shrout"),
-  SEvars = c("ticker", "ncusip", "exchcd", "shrcd", "siccd"),
+  vars = c("prc", "ret", "shrout", "ticker", "ncusip", "exchcd", "shrcd", "siccd"),
   START_date = "2022-01-01",
   END_date = "2022-09-27",
   usnm = "username",
@@ -18,13 +17,11 @@ CRSP.MERGE(
 \arguments{
 \item{freq}{The frequency of the data being retrieved. Passible values are 'd' for daily and 'm' for monthly.}
 
-\item{SFvars}{A character vector specifying variable names from the stock file.}
+\item{vars}{A character vector specifying variable names from the stock file.}
 
-\item{SEvars}{A character vector specifying variable names from the event file.}
+\item{START_date}{The start date of the sample, in the format 'YYYY-MM-DD'.}
 
-\item{START_date}{The start date of the sample.}
-
-\item{END_date}{The end date of the sample.}
+\item{END_date}{The end date of the sample, in the format 'YYYY-MM-DD'.}
 
 \item{usnm}{WRDS username.}
 
