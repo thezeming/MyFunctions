@@ -4,7 +4,7 @@
 devtools::document()
 
 # install and attach package
-#devtools::install()
+# devtools::install(upgrade = "never")
 #library(MyFunctions)
 
 # installation from Github
@@ -16,4 +16,4 @@ devtools::document()
 # devtools::install_github("thezeming/MyFunctions",
 #                         ref="master")
 
-devtools::install_github("thezeming/MyFunctions")
+devtools::install_github("thezeming/MyFunctions", upgrade = "never")

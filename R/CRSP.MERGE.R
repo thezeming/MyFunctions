@@ -7,7 +7,7 @@
 #'
 #' @param freq The frequency of the data being retrieved. Passible values are 'd' for daily and 'm' for monthly.
 #'
-#' @param vars A character vector specifying variable names from the stock file.
+#' @param vars A character vector specifying variable names from the stock file. Please note that by default, 'permno' and 'date' are always included in the output and do not need to be specified here.
 #'
 #' @param START_date The start date of the sample, in the format 'YYYY-MM-DD'.
 #'
