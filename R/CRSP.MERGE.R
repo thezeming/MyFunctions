@@ -7,13 +7,11 @@
 #'
 #' @param freq The frequency of the data being retrieved. Passible values are 'd' for daily and 'm' for monthly.
 #'
-#' @param SFvars A character vector specifying variable names from the stock file.
+#' @param vars A character vector specifying variable names from the stock file.
 #'
-#' @param SEvars A character vector specifying variable names from the event file.
+#' @param START_date The start date of the sample, in the format 'YYYY-MM-DD'.
 #'
-#' @param START_date The start date of the sample.
-#'
-#' @param END_date The end date of the sample.
+#' @param END_date The end date of the sample, in the format 'YYYY-MM-DD'.
 #'
 #' @param usnm WRDS username.
 #'
@@ -27,10 +25,10 @@
 #' @export
 CRSP.MERGE <-
   function(freq = 'd',
-           SFvars = c('prc',
+           vars = c('prc',
                       'ret',
-                      'shrout'),
-           SEvars = c('ticker',
+                      'shrout',
+                      'ticker',
                       'ncusip',
                       'exchcd',
                       'shrcd',
@@ -44,21 +42,19 @@ CRSP.MERGE <-
     start_date <- lubridate::ymd(START_date)
     end_date <- lubridate::ymd(END_date)
 
+    if(!freq %in% c('d', 'm')){
+        stop(
+            'The argument "freq" must be either "d" or "m".'
+        )
+    }
+
     if(start_date > end_date){
       stop(
         'START_date must be smaller than or equal to END_date.'
       )
     }
 
-    sfvars <-
-      c('permno',
-        'date',
-        tolower(SFvars))
-
-    sevars <-
-      c('permno',
-        'date',
-        tolower(SEvars))
+    vars <- c('permno', 'date', tolower(vars))
 
     # once you setup the pgpass.conf file as explained at https://wrds-www.wharton.upenn.edu/pages/support/programming-wrds/programming-r/r-from-your-computer/, you don't need to enter your password anymore.
     if(pgpass){
@@ -98,43 +94,33 @@ CRSP.MERGE <-
                  dbplyr::in_schema('crsp',
                     paste0(freq, 'senames')))
 
+    SFVARs <- colnames(sf_db)
+
+    SEVARs <- colnames(seall_db)
 
     e <-
-      which(!sfvars %in% colnames(sf_db))
+      setdiff(vars, c(SFVARs, SEVARs))
+
+    if(freq == 'd'){
+        FRED <- 'daily'
+    } else {
+       FRED <- 'monthly'
+    }
 
     if (length(e) != 0) {
-      stop(sfvars[e] |>
+      stop(e |>
              paste0(collapse = ' ') |>
-             paste0('Invalid values in SFvars',
+             paste0('Invalid values in vars',
                     ': ',
                     ... = _) |>
-            paste0('\n Possible options in ',
-                   paste0(freq, 'sf'),
-                   ' are:\n',
-                   paste0(colnames(sf_db)[!colnames(sf_db) %in% c('permno', 'date')],
+            paste0('\n Possible options for ', FRED,' data are:\n',
+                   paste0(setdiff(c(SFVARs, SEVARs), c('permno', 'date')),
                           collapse = ' '))
                    )
     }
 
-
-
-    e <-
-      which(!sevars %in% colnames(seall_db))
-
-    if (length(e) != 0) {
-      stop(sevars[e] |>
-             paste0(collapse = ' ') |>
-             paste0('Invalid values in SEvars',
-                    ': ',
-                    ... = _) |>
-            paste0('\n Possible options in ',
-                   paste0(freq, 'seall'),
-                   ' are:\n',
-                   paste0(colnames(seall_db)[!colnames(seall_db) %in% c('permno', 'date')],
-                          collapse = ' '))
-                    )
-    }
-
+    sfvars <- setdiff(vars, SEVARs) |> c('permno', 'date')
+    sevars <- setdiff(vars, SFVARs) |> c('permno', 'date')
 
     ## get stock data ##
     senames_permnos <-
@@ -237,4 +223,3 @@ CRSP.MERGE <-
 
     return(dat)
   }
-
