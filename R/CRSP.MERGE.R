@@ -54,7 +54,7 @@ CRSP.MERGE <-
       )
     }
 
-    vars <- c('permno', 'date', tolower(vars))
+    vars <- tolower(vars)
 
     # once you setup the pgpass.conf file as explained at https://wrds-www.wharton.upenn.edu/pages/support/programming-wrds/programming-r/r-from-your-computer/, you don't need to enter your password anymore.
     if(pgpass){
@@ -119,8 +119,8 @@ CRSP.MERGE <-
                    )
     }
 
-    sfvars <- intersect(vars, SFVARs) 
-    sevars <- intersect(vars, SEVARs)
+    sfvars <- intersect(vars, SFVARs)  |> c('permno', 'date')
+    sevars <- intersect(vars, setdiff(SEVARs, SFVARs)) |> c('permno', 'date')
 
     ## get stock data ##
     senames_permnos <-
