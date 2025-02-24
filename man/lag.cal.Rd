@@ -4,7 +4,7 @@
 \alias{lag.cal}
 \title{Computing Optimal Lags for Newey-West tests}
 \usage{
-\method{lag}{cal}(x)
+lag.cal(x)
 }
 \arguments{
 \item{x}{The number of periods in the time series.}

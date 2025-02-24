@@ -119,8 +119,8 @@ CRSP.MERGE <-
                    )
     }
 
-    sfvars <- setdiff(vars, SEVARs) |> c('permno', 'date')
-    sevars <- setdiff(vars, SFVARs) |> c('permno', 'date')
+    sfvars <- intersect(vars, SFVARs) 
+    sevars <- intersect(vars, SEVARs)
 
     ## get stock data ##
     senames_permnos <-
