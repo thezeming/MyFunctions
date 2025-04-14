@@ -4,10 +4,12 @@
 \alias{Newey.west.one.sample.t}
 \title{Newey-West One Sample t-stat}
 \usage{
-Newey.west.one.sample.t(dat)
+Newey.west.one.sample.t(dat, na.rm = FALSE)
 }
 \arguments{
 \item{dat}{A series of data}
+
+\item{na.rm}{Logical. If TRUE, missing values are removed.}
 }
 \value{
 The Newey-West t-stat

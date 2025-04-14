@@ -4,10 +4,17 @@
 #' The optimal lag is computed by the function lag.cal.
 #'
 #' @param dat A series of data
+#' @param na.rm Logical. If TRUE, missing values are removed.
 #' @return The Newey-West t-stat
 
 #' @export
-Newey.west.one.sample.t <- function(dat){
+Newey.west.one.sample.t <- function(dat, na.rm = FALSE){
+  if(na.rm == TRUE){
+    dat <- na.omit(dat)
+  }
+  if(length(dat) < 2){
+    stop("The length of the data must be greater than 1.")
+  }
   time_series_vector <- dat %>% as.vector()
   market_timing_ave_t_regression <- lm(time_series_vector~1)
 
